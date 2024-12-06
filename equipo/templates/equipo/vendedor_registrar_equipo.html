@@ -1,0 +1,34 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Registrar Nuevo Equipo</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-3">
+            <label for="id_tipo">Tipo de Equipo</label>
+            {{ form.tipo }}
+            <small class="text-danger">{{ form.tipo.errors }}</small>
+        </div>
+        <div class="mb-3">
+            <label for="id_marca">Marca</label>
+            {{ form.marca }}
+            <small class="text-danger">{{ form.marca.errors }}</small>
+        </div>
+        <div class="mb-3">
+            <label for="id_observaciones">Observaciones</label>
+            {{ form.observaciones }}
+            <small class="text-danger">{{ form.observaciones.errors }}</small>
+        </div>
+        <div class="form-check">
+            {{ form.incluye_cargador }}
+            <label for="id_incluye_cargador" class="form-check-label">Incluye Cargador</label>
+            <small class="text-danger">{{ form.incluye_cargador.errors }}</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Registrar Equipo</button>
+    </form>
+</div>
+
+{% endblock  %}

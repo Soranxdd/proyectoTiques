@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Detalles del Ticket</h2>
+    <div class="card">
+        <div class="card-header">
+            <h4>Ticket #{{ ticket.id }}</h4>  <!-- Aquí mostramos el ID del ticket -->
+        </div>
+        <div class="card-body">
+            <h5>Estado Actual: <span class="badge bg-info">{{ ticket.get_estado_display }}</span></h5>  <!-- Estado -->
+            <p><strong>Tipo de Equipo:</strong> {{ ticket.equipo.tipo }}</p>  <!-- Tipo de equipo -->
+            <p><strong>Marca:</strong> {{ ticket.equipo.marca }}</p>  <!-- Marca -->
+            <p><strong>Fecha de Creación:</strong> {{ ticket.fecha_creacion|date:"d de F, Y" }}</p>  <!-- Fecha de creación -->
+            <p><strong>Observaciones del Cliente:</strong> {{ ticket.equipo.observaciones }}</p>  <!-- Observaciones del cliente -->
+            <p><strong>Técnico Asignado:</strong> {{ ticket.tecnico }}</p>  <!-- Técnico asignado -->
+            
+            <h3>Historial de Cambios</h3>
+            <ul>
+                {% for historial in ticket.historial.all %}
+                    <li>
+                        <strong>{{ historial.fecha }}:</strong> {{ historial.descripcion }}
+                        <br>
+                        <small>Realizado por: {{ historial.usuario.username }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            {% if ticket.tecnico is None %}
+            <a href="{% url 'modificar_observaciones' pk=ticket.id %}" class="btn btn-warning">Modificar Observaciones</a>
+            {% endif %}
+            {% if user.groups.first.name == "Vendedores" %}
+            <a href="{% url 'asignar_tecnico' ticket.id %}" class="btn btn-secondary">Asignar Técnico</a>
+            {% if ticket.estado == 'diagnostico' %}
+            <form method="post" action="{% url 'marcar_prioridad' ticket.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning mt-3">
+                    {% if ticket.prioridad %} Quitar Prioridad {% else %} Marcar como Prioridad {% endif %}
+                </button>
+            </form>
+        {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock  %}

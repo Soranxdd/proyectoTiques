@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Detalles del Reporte</h2>
+    <p><strong>Usuario:</strong> {{ report.usuario }}</p>
+    <p><strong>Rango de Fechas:</strong> {{ report.fecha_inicio }} - {{ report.fecha_fin }}</p>
+    <p><strong>Generado en:</strong> {{ report.fecha_generacion }}</p>
+
+    {% if rendimiento %}
+        {% if report.usuario.groups.first.name == 'Técnicos' %}
+            <h4>Rendimiento Técnico</h4>
+            <p><strong>Tickets Resueltos:</strong> {{ rendimiento.tickets_resueltos }}</p>
+            <p><strong>Tickets Urgentes:</strong> {{ rendimiento.tickets_urgentes }}</p>
+        {% elif report.usuario.groups.first.name == 'Vendedores' %}
+            <h4>Rendimiento Vendedor</h4>
+            <p><strong>Tickets Creados:</strong> {{ rendimiento.tickets_creados }}</p>
+            <p><strong>Equipos Registrados:</strong> {{ rendimiento.equipos_registrados }}</p>
+        {% endif %}
+    {% else %}
+        <p>No hay datos de rendimiento disponibles para este usuario.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Consultar Tickets</h2>
+    <form class="mb-3" method="get">  <!-- Cambia a method="get" para que los filtros funcionen -->
+        <div class="row">
+            <div class="col">
+                <label for="filtroFecha" class="form-label">Filtrar por Fecha</label>
+                <input type="date" name="filtroFecha" class="form-control" id="filtroFecha" value="{{ request.GET.filtroFecha }}">
+            </div>
+            <div class="col">
+                <label for="filtroEstado" class="form-label">Filtrar por Estado</label>
+                <select name="filtroEstado" class="form-control" id="filtroEstado">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="pendiente" {% if request.GET.filtroEstado == "pendiente" %}selected{% endif %}>Pendiente</option>
+                    <option value="diagnostico" {% if request.GET.filtroEstado == "diagnostico" %}selected{% endif %}>En diagnostico</option>
+                    <option value="listo" {% if request.GET.filtroEstado == "listo" %}selected{% endif %}>Listo para retiro</option>
+                </select>
+            </div>
+            <div hidden class="col">
+                <label for="filtroEquipo" class="form-label">Filtrar por Tipo de Equipo</label>
+                <input type="text" name="filtroEquipo" class="form-control" id="filtroEquipo" placeholder="Laptop, PC, etc." value="{{ request.GET.filtroEquipo }}">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Aplicar Filtros</button>
+    </form>
+
+    <table class="table table-bordered table-striped mt-3">
+        <thead class='table-dark'>
+            <tr>
+                <th>Folio</th>
+                <th>Equipo</th>
+                <th>Vendedor</th>
+                <th>Técnico</th>
+                <th>Estado</th>
+                <th>Fecha de Creación</th>
+                <th>Prioridad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket.equipo.folio }}</td>
+                <td>{{ ticket.equipo }}</td>
+                <td>{{ ticket.vendedor }}</td>
+                <td>{{ ticket.tecnico }}</td>
+                <td>{{ ticket.get_estado_display }}</td>
+                <td>{{ ticket.fecha_creacion|date:"d-m-Y H:i" }}</td>
+                <td>{{ ticket.prioridad|yesno:"Alta,Baja" }}</td>
+                <td><a href="{% url 'detail' ticket.id %}" class="btn btn-primary">Detalles</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No hay tickets disponibles</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Primero</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+    
+            <span class="current">
+                Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Ultimo &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+{% endblock %}

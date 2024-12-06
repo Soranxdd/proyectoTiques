@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Marcar como Listo</h2>
+    <p>Ticket ID: {{ ticket.id }}</p>
+    <p>Estado actual: {{ ticket.estado }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Guardar y Marcar como Listo</button>
+        <a href="{% url 'tickets_asignados' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
